@@ -567,23 +567,26 @@ project:
 The signed VeriGuide receipt is attached as the last page of this
 report.
 
-\begin{center}
-  \fbox{\parbox{0.82\linewidth}{\centering
-    \textcolor{red}{\textbf{[ INSERT VERIGUIDE RECEIPT IMAGE HERE ]}}\\[6pt]
-    \small After submitting to VeriGuide and saving the receipt PNG
-    as \texttt{veriguide.png} alongside this \texttt{.tex}, replace
-    this box with:\\[4pt]
-    \texttt{\textbackslash includegraphics[}\\
-    \texttt{\quad width=0.92\textbackslash linewidth,}\\
-    \texttt{\quad height=0.85\textbackslash textheight,}\\
-    \texttt{\quad keepaspectratio]\{veriguide.png\}}}}
-\end{center}
-
-% When the final VeriGuide receipt image is ready, replace the box above
-% with the following code:
-%
-% \begin{center}
-%   \includegraphics[width=0.92\linewidth,height=0.85\textheight,keepaspectratio]{veriguide.png}
-% \end{center}
+% Auto-pick: if `veriguide.pdf` (signed receipt) is present in this
+% directory, embed it as a full-page figure. Otherwise show a red
+% placeholder so the public GitHub copy still compiles cleanly without
+% leaking the signed copy into the public repo.
+\IfFileExists{veriguide.pdf}{%
+  \begin{center}
+    \includegraphics[width=0.92\linewidth,
+                     height=0.85\textheight,
+                     keepaspectratio]{veriguide.pdf}
+  \end{center}
+}{%
+  \begin{center}
+    \fbox{\parbox{0.82\linewidth}{\centering
+      \textcolor{red}{\textbf{[ INSERT VERIGUIDE RECEIPT HERE ]}}\\[6pt]
+      \small The signed VeriGuide receipt is kept out of the public
+      source repository for privacy. Drop the signed receipt as
+      \texttt{report\_tex/veriguide.pdf} locally, and this section
+      will be replaced by the receipt automatically on the next
+      \texttt{pdflatex} run.}}
+  \end{center}
+}
 
 \end{document}
