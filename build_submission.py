@@ -76,25 +76,23 @@ def main() -> None:
             for path, rel in _walk(base):
                 zf.write(path, arcname=rel)
                 written += 1
-        # README at the root for graders.
-        readme = ROOT / "README.md"
-        if readme.exists():
-            zf.write(readme, arcname="README.md")
-            written += 1
+        # Top-level metadata for graders.
+        for fname in ("README.md", "LICENSE"):
+            f = ROOT / fname
+            if f.exists():
+                zf.write(f, arcname=fname)
+                written += 1
 
     size_mb = OUT.stat().st_size / 1024 / 1024
     print(f"[done] {OUT.name}  ({written} files, {size_mb:.2f} MB)")
     print()
     print("Next manual steps:")
-    print(f"  1. Open Group{GROUP_NUMBER}_report.docx in Pages/Word, insert 4 Streamlit")
-    print("     screenshots + paste the signed VeriGuide receipt, then 'Export as PDF'")
-    print(f"     -> Group{GROUP_NUMBER}_report.pdf")
+    print(f"  1. Run ./build_final_pdf.sh  -> Group{GROUP_NUMBER}_report.pdf")
+    print("     (auto-embeds report_tex/veriguide.pdf if present)")
     print(f"  2. Record Group{GROUP_NUMBER}.mp4 demo video (<= 10 min)")
-    print("  3. Upload models (.pkl) to a public Google Drive folder; paste")
-    print("     the URL into the report's Data Modeling chapter")
-    print("  4. Submit to Blackboard > Content > Course Project:")
+    print("  3. Submit to Blackboard > Content > Course Project:")
     print(f"       - Group{GROUP_NUMBER}_source.zip  (this file)")
-    print(f"       - Group{GROUP_NUMBER}_report.pdf")
+    print(f"       - Group{GROUP_NUMBER}_report.pdf  (with VeriGuide receipt)")
     print(f"       - Group{GROUP_NUMBER}.mp4         (uploaded separately, no group share)")
 
 
