@@ -322,11 +322,14 @@ All sklearn artifacts are saved to \path{source_code/models/}:
 \end{itemize}
 
 \begin{sloppypar}
-\noindent The model artifacts are included in the accompanying
-submission package, and the source repository at
-\url{https://github.com/ShepZhang/sonicdna-iems5726} also includes
-a \path{pipeline/preprocess.py} script that regenerates them from
-the Kaggle dataset in roughly two minutes.
+\noindent Per the course requirement, the trained model artifacts are
+\emph{not} bundled in the submission ZIP. They are published in the
+public source repository at
+\url{https://github.com/ShepZhang/sonicdna-iems5726} (under
+\path{source_code/models/}) and can also be regenerated from the Kaggle
+dataset in roughly two minutes by running
+\path{pipeline/preprocess.py}. See \path{application/MODELS.md} in the
+ZIP for retrieval instructions.
 \end{sloppypar}
 
 % =====================================================================
@@ -407,8 +410,12 @@ the public HuggingFace Spaces demo.
 \begin{itemize}
   \item Source repository:
         \url{https://github.com/ShepZhang/sonicdna-iems5726}
-  \item Public live demo: provided in the accompanying submission
-        package once the HuggingFace Space has been published.
+  \item Local run: \path{docker build -t sonicdna .} followed by
+        \path{docker run -p 8501:8501 sonicdna}, then open
+        \texttt{http://localhost:8501}. The full Streamlit experience
+        (audio-reactive MoodPrint, Tone.js BGM, parallel universes,
+        90k-track scatter map) runs entirely offline once the image is
+        built.
 \end{itemize}
 
 % =====================================================================

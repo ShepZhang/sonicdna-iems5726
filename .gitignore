@@ -36,8 +36,10 @@ source_code/data/raw/*
 !source_code/data/raw/.gitkeep
 source_code/data/processed/*
 !source_code/data/processed/.gitkeep
-source_code/models/*.pkl
-source_code/models/*.joblib
+# Trained sklearn artifacts (*.pkl, *.joblib) ARE tracked here so the
+# public source repository can serve the "link to trained model(s)"
+# required by IEMS5726 project rules. They are tiny (<400 KB total)
+# and reproducible from the Kaggle dataset via pipeline/preprocess.py.
 source_code/models/*.npz
 
 # Streamlit cache
@@ -67,6 +69,7 @@ veriguide.pdf
 # Video script is for personal recording prep, not part of the
 # graded source bundle and not interesting to public repo readers.
 VIDEO_SCRIPT.md
+Group43_video_script.pdf
 
 # Course / personal files we don't publish on GitHub
 IEMS5726_2025-26_ProjectInstructions.pdf
