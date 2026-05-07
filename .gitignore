@@ -64,6 +64,10 @@ veriguide.pdf
 # inside report_tex/ stays as the unsigned placeholder version.
 /Group43_report.pdf
 
+# Video script is for personal recording prep, not part of the
+# graded source bundle and not interesting to public repo readers.
+VIDEO_SCRIPT.md
+
 # Course / personal files we don't publish on GitHub
 IEMS5726_2025-26_ProjectInstructions.pdf
 IEMS5726_GroupXXReport.docx
