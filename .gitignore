@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Jupyter
+.jupyter/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific: large data and models do NOT enter git or zip
+source_code/data/raw/*
+!source_code/data/raw/.gitkeep
+source_code/data/processed/*
+!source_code/data/processed/.gitkeep
+source_code/models/*.pkl
+source_code/models/*.joblib
+source_code/models/*.npz
+
+# Streamlit cache
+.streamlit/secrets.toml
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Submission artifacts
+*.zip
+*.rar
+Group*.mp4
+Group*.m4a
+veriguide_receipt*.png
+veriguide_receipt*.pdf
+veriguide.png
+veriguide.pdf
+
+# Course / personal files we don't publish on GitHub
+IEMS5726_2025-26_ProjectInstructions.pdf
+IEMS5726_GroupXXReport.docx
+Group43_report.docx
+
+# LaTeX auxiliary files
+*.aux
+*.lof
+*.lot
+*.toc
+*.out
+*.log
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb

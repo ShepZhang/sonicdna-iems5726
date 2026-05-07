@@ -1,0 +1,584 @@
+% =====================================================================
+%  IEMS5726 Data Science in Practice  (2025-26 Term 2 / Session A)
+%  Group 43 — Project Report
+%  Compile with: pdflatex on Overleaf (article class, A4)
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+% ----- packages ------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{booktabs}
+
+% ----- colors --------------------------------------------------------
+\definecolor{sdNavy}{HTML}{1A1A4A}
+\definecolor{sdGrey}{HTML}{555555}
+
+% ----- section heading style ----------------------------------------
+\titleformat{\section}{\Large\bfseries\color{sdNavy}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{sdNavy}}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.0em}{0.55em}
+\titlespacing*{\subsection}{0pt}{0.75em}{0.35em}
+
+% ----- start every new section on a new page -------------------------
+% FloatBarrier prevents figures from drifting into the next section.
+\newcommand{\sectionbreak}{\FloatBarrier\clearpage}
+
+% ----- caption style -------------------------------------------------
+\captionsetup{
+  font={small,it,color=sdGrey},
+  labelfont={small,it,color=sdGrey},
+  justification=centering,
+  labelsep=period,
+  skip=4pt
+}
+
+% ----- paragraph and list style -------------------------------------
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+
+\setlist[itemize]{leftmargin=1.35em,topsep=2pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{leftmargin=1.55em,topsep=2pt,itemsep=3pt,parsep=0pt}
+
+% ----- hyperref defaults --------------------------------------------
+\hypersetup{
+  pdftitle={SonicDNA -- A Multi-Lens Music Personality Mirror},
+  pdfauthor={Group 43 (Xupeng ZHANG, Zetao HUANG)},
+  colorlinks=true,
+  linkcolor=sdNavy,
+  urlcolor=sdNavy,
+  citecolor=sdNavy
+}
+
+% ----- shorthand: normal figure -------------------------------------
+% The image is constrained by BOTH width and height.
+% This prevents wide screenshots from extending beyond the right margin.
+\newcommand{\sdfigure}[3][0.88\linewidth]{%
+  \begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=#1,height=0.60\textheight,keepaspectratio]{#2}
+    \caption{#3}
+  \end{figure}
+}
+
+% ----- shorthand: large screenshot figure ----------------------------
+% Use this for UI screenshots. It still cannot exceed text width.
+\newcommand{\sdscreenshot}[3][0.92\linewidth]{%
+  \begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=#1,height=0.62\textheight,keepaspectratio]{#2}
+    \caption{#3}
+  \end{figure}
+}
+
+% ----- shorthand: small/narrow figure --------------------------------
+\newcommand{\sdsmallfigure}[3][0.48\linewidth]{%
+  \begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=#1,height=0.55\textheight,keepaspectratio]{#2}
+    \caption{#3}
+  \end{figure}
+}
+
+% =====================================================================
+\begin{document}
+
+% =====================================================================
+% Title page
+% =====================================================================
+\begin{titlepage}
+  \thispagestyle{empty}
+  \centering
+
+  % ----- top course information -----
+  \vspace*{1.6cm}
+
+  {\Large\bfseries IEMS5726 Data Science in Practice}\\[6pt]
+  {\normalsize 2025--26 Term 2 / Session A}
+
+  % ----- controlled vertical gap -----
+  \vspace{2.6cm}
+
+  % ----- main title block -----
+  {\fontsize{26pt}{31pt}\selectfont\bfseries
+   SonicDNA}\\[10pt]
+
+  {\fontsize{18pt}{22pt}\selectfont\bfseries
+   A Multi-Lens Music Personality Mirror}\\[1.4cm]
+
+  {\large\bfseries Project Report}
+
+  % ----- separator -----
+  \vspace{1.2cm}
+  \rule{0.68\linewidth}{0.45pt}
+  \vspace{1.0cm}
+
+  % ----- group information -----
+  \begin{tabular}{rl}
+    \textbf{Group number:} & 43 \\[5pt]
+    \textbf{Group members:} & 1155238738, Xupeng ZHANG \\[3pt]
+                            & 1155251352, Zetao HUANG \\
+  \end{tabular}
+
+  % ----- bottom date -----
+  \vfill
+
+  {\normalsize\textit{Submission date: 8 May 2026}}
+
+  \vspace*{1.2cm}
+
+\end{titlepage}
+
+% =====================================================================
+\tableofcontents
+
+% =====================================================================
+\section{Problem Definitions}
+
+Modern music streaming services typically expose only two surfaces to a
+listener: an algorithmic ``similar tracks'' rail and an annual
+marketing recap (e.g. Spotify Wrapped). Both reduce the user's library
+to a single dimension --- popularity or genre --- and leave no room for
+self-exploration of taste.
+
+In short, SonicDNA turns a playlist into a visual, psychological and
+recommendation-based profile. SonicDNA addresses the gap with a
+\emph{multi-lens music personality mirror}: the user uploads a playlist
+(CSV) and the application produces three complementary outputs derived
+from a single 9-dimensional audio-feature embedding:
+
+\begin{itemize}
+  \item \textbf{MoodPrint} --- a vinyl-record artwork (a ``music DNA'')
+        deterministically derived from the playlist composition, so two
+        different playlists never share a print.
+  \item \textbf{Music MBTI} --- the playlist is reduced to a 4-letter
+        code on four interpretable axes (E/I, N/S, F/T, J/P), each axis
+        built from a subset of audio features, mapping to one of 16
+        named personality types with hand-written 60-character
+        descriptions.
+  \item \textbf{Parallel-Universe Playlists} --- for three hand-curated
+        ``universes'' (Neon Synthwave Drive / Lo-fi Study Den /
+        Mosh Pit Riot) we linearly project the user's centroid toward
+        the universe's centroid ($\alpha = 0.7$) and retrieve the top-10
+        most cosine-similar tracks inside that universe, answering
+        ``what would you listen to if you grew up there?''.
+\end{itemize}
+
+The application therefore solves a dual problem: it produces objective,
+reproducible analytics (clustering, PCA, recommendation) and a
+subjective interpretive layer (MoodPrint art + MBTI labels) in one
+coherent pipeline --- making the analytical results memorable and
+shareable instead of disposable.
+
+% =====================================================================
+\section{Data Collection, Preprocessing and Representation}
+
+\subsection{Data source}
+
+Kaggle \emph{Spotify Tracks Dataset} (Maharshi Pandya).
+
+\begin{sloppypar}
+\noindent\url{https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset}
+\end{sloppypar}
+
+The dataset contains 114{,}000 tracks across 114 fine-grained genres,
+with the full audio-features panel that the Spotify Web API used to
+expose. Using this offline dump lets us avoid the API access changes
+published 2024-11 by Spotify.
+
+\subsection{Data collection}
+
+We fetch the dataset programmatically via \texttt{kagglehub} on first
+run (see \path{preprocess.py} under \path{source_code/pipeline/} and
+the \texttt{Dockerfile} build step), so the application is
+self-contained: no external API, no long-running scrapers.
+
+\subsection{Data preprocessing}
+
+\begin{itemize}
+  \item Drop the original index column \texttt{Unnamed: 0}.
+  \item Drop rows missing any of \{\texttt{track\_id}, \texttt{artists},
+        \texttt{track\_name}\} (3 rows).
+  \item De-duplicate on \texttt{track\_id} (the dataset duplicates each
+        track once per genre slice; 114k rows $\to$ 89{,}740 unique
+        tracks).
+  \item Aggregate the 114 fine genres into 11 meta-genres (Pop, Rock,
+        Metal, HipHop, Electronic, Jazz, Folk, Latin, World, Chill,
+        Niche) via a hand-built dictionary in
+        \path{pipeline/preprocess.py}.
+  \item Standardize the 9 numeric audio features with sklearn's
+        \texttt{StandardScaler} (mean 0, std 1) so cosine similarity,
+        KMeans and PCA all operate in a comparable feature space.
+  \item Persist the cleaned table to parquet (snappy) and the scaler to
+        joblib pickle for re-use by all downstream modules.
+\end{itemize}
+
+\subsection{Data representation}
+
+Each track is represented as a 9-dimensional real-valued vector in
+z-scored space:
+\begin{center}
+  \emph{(danceability, energy, valence, acousticness, instrumentalness,
+   liveness, speechiness, tempo, popularity).}
+\end{center}
+
+A user playlist is represented as the mean of these 9-vectors across
+its tracks. This single embedding is the input shared by MoodPrint,
+Music MBTI, the recommender, and the parallel-universe projection ---
+keeping all four creative modules consistent and letting any
+improvement to the representation propagate downstream without code
+changes elsewhere.
+
+% =====================================================================
+\section{Data Modeling}
+
+\subsection{Mood KMeans (k = 8)}
+
+We fit one KMeans (\texttt{k=8, random\_state=42, n\_init=10}) on the
+z-scored 9-D feature space. Cluster names are derived from each
+centroid's most distinctive trait via a small rule-base (see
+\path{pipeline/cluster.py::name_mood_clusters}): Mainstream Pulse,
+Sunlit Indie, Library Hush, Live Stage Glow, Stormcore Drive, Cipher
+Booth, Rainy Window, Drift Layer.
+
+\sdfigure[0.82\linewidth]{figures/05_centroid_radars.png}{%
+  KMeans 8 cluster centroids in z-scored space. Each cluster has a
+  distinct dominant axis (e.g.\ Cipher Booth on speechiness; Library
+  Hush on acousticness and instrumentalness).}
+
+\subsection{Music MBTI (4-axis composite mapping)}
+
+On the same z-scored space we define four composite axes whose signs
+encode an MBTI-style 4-letter code:
+
+\begin{itemize}
+  \item \textbf{E vs I}: energy + danceability (extrovert vs.\
+        introvert).
+  \item \textbf{N vs S}: acousticness + instrumentalness (intuitive
+        vs.\ sensing).
+  \item \textbf{F vs T}: $\text{valence} - 0.5 \times
+        \text{speechiness}$ (feeling vs.\ thinking).
+  \item \textbf{J vs P}: popularity (mainstream-judging vs.\
+        niche-perceiving).
+\end{itemize}
+
+Per-track axes are also computed
+(\path{pipeline/mbti.py::attach_track_axes}), which lets us list
+``representative tracks'' for each of the 16 types by picking the
+tracks whose own 4-axis scores are deepest into their quadrant. This
+avoids the sample-imbalance trap of training a 16-class classifier on
+heavily skewed labels.
+
+\subsection{Parallel Universe projection}
+
+For each of three hand-curated universes we filter the library to a
+curated set of fine-grained genres (e.g., Neon Synthwave Drive =
+\{synth-pop, electronic, electro, disco, new-age, house, deep-house,
+progressive-house, chicago-house, edm\}) and compute the centroid
+vector. The user's centroid $\mathbf{u}$ is then linearly interpolated
+toward each universe centroid $\mathbf{a}$:
+\[
+  \mathbf{p} \;=\; \mathbf{u} + \alpha (\mathbf{a} - \mathbf{u}),
+  \qquad \alpha = 0.7.
+\]
+We run cosine-similarity recommendation inside that universe's track
+pool only, so the result is a believable ``you, but in this universe''
+playlist instead of a hard genre swap that would lose all of the
+user's personal style.
+
+\subsection{Diversity-aware recommender}
+
+Pure cosine ranking suffers from the all-tracks-by-the-same-artist
+failure mode. We post-process the cosine ordering with two hard
+diversity caps: at most 1 track per primary artist and at most 3
+tracks per meta-genre. This is the same routine reused by both the
+global recommender (Dashboard tab) and the universe-projected
+recommender (Parallel Universes tab) via a
+\texttt{library\_subset\_mask}.
+
+\subsection{Pretrained model artifacts}
+
+All sklearn artifacts are saved to \path{source_code/models/}:
+
+\begin{itemize}
+  \item \texttt{scaler.pkl} --- StandardScaler over 9 audio features
+  \item \texttt{kmeans\_mood.pkl} --- KMeans($k=8$) over z-scored space
+  \item \texttt{pca.pkl} --- 2-D PCA used by the Insights scatter map
+  \item \texttt{mood\_cluster\_names.json} --- interpretive name per
+        centroid id
+\end{itemize}
+
+\noindent The model artifacts are included in the accompanying
+submission package.
+
+% =====================================================================
+\section{Data Visualization}
+
+\subsection{Visualization for the data}
+
+\sdfigure[0.82\linewidth]{figures/01_feature_distributions.png}{%
+  Distributions of 9 audio features on the raw scale across
+  89{,}740 tracks; acousticness / instrumentalness are heavily
+  right-skewed, tempo is roughly bimodal around 90 and 130 BPM.}
+
+\sdfigure[0.62\linewidth]{figures/02_correlation_heatmap.png}{%
+  Pearson correlations between the 9 modeling features. The set is
+  mostly uncorrelated ($|r|<0.5$ everywhere except the energy--loudness
+  pair which we do not include), meaning the 9-D vector is not
+  redundant.}
+
+\sdfigure[0.80\linewidth]{figures/03_metagenre_distribution.png}{%
+  Track count per meta-genre after collapsing 114 fine genres into 11
+  buckets.}
+
+\subsection{Visualization for the model}
+
+\sdfigure[0.76\linewidth]{figures/04_pca_global_map.png}{%
+  PCA 2-D projection of the full 89{,}740-track library, colored by
+  KMeans mood cluster id. The 8 clusters separate cleanly even with
+  only 40.5\% of variance preserved.}
+
+\subsection{Visualization for the results}
+
+Each user playlist produces a unique MoodPrint. Below is the MoodPrint
+of a 25-track Chill playlist used for development:
+
+\sdsmallfigure[0.50\linewidth]{figures/moodprint_smoke_chill.png}{%
+  MoodPrint for a 25-track Chill playlist. The vinyl record encodes 9
+  audio features as concentric tracks; the outer ring shows the
+  mood-cluster proportions.}
+
+% =====================================================================
+\section{System Architecture}
+
+\subsection{Current MVP architecture}
+
+The application is a single Streamlit process backed by a decoupled
+pipeline package. All four creative modules live in
+\path{source_code/pipeline/} and are imported by
+\path{application/app.py} via an explicit \path{sys.path} injection at
+the top of the module:
+
+\sdfigure[0.84\linewidth]{figures/06_arch_mvp.png}{%
+  Current MVP architecture. Streamlit is the only UI surface; all model
+  artifacts live on disk and are loaded once via
+  \texttt{@st.cache\_resource}.}
+
+\subsection{Future production architecture}
+
+The pipeline package is intentionally framework-agnostic so the
+Streamlit UI can be swapped for the standard production stack
+(NGINX $\to$ Vue3 SPA + FastAPI backend $\to$ MySQL/Redis) without
+touching any modeling code. The diagram below documents that upgrade
+path:
+
+\sdfigure[0.84\linewidth]{figures/07_arch_production.png}{%
+  Future production architecture upgrade path. The Streamlit app
+  collapses into a Vue3 SPA + FastAPI backend; the same pipeline
+  package is reused as a library, so no modeling code changes.}
+
+\subsection{Deployment}
+
+The MVP is fully containerized: a single \texttt{Dockerfile} (build
+context = project root) installs both \path{source_code} and
+\path{application} dependencies, downloads the Kaggle dataset at build
+time, runs the preprocessing + clustering pipeline once, and exposes
+the Streamlit app on port 8501. The same image is the deliverable for
+the public HuggingFace Spaces demo.
+
+\begin{itemize}
+  \item Public live demo: provided in the accompanying submission
+        package.
+  \item Source repository: provided in the accompanying submission
+        package.
+\end{itemize}
+
+% =====================================================================
+\section{User Interfaces of the Software}
+
+The Streamlit application has a fixed sidebar (sample-or-upload
+playlist selector) and four content tabs.
+
+\paragraph{Screenshot 1 --- Dashboard tab.}
+Vinyl-style MoodPrint, Music MBTI card with rarity stat, the 16-type
+distribution bar, and the four-axis breakdown.
+
+\sdscreenshot[0.90\linewidth]{screenshots/01_dashboard.png}{%
+  Dashboard tab --- Workout Beast Mode sample. The vinyl print encodes
+  9 audio features as concentric tracks; arc length, brightness and
+  thickness reflect how strongly the playlist exceeds the global
+  average on each feature.}
+
+\paragraph{Screenshot 2 --- Parallel Universes tab.}
+Segmented control to pick one of three hand-curated universes, Top-10
+cosine recommendations from inside that universe's pool, and a
+three-overlay radar.
+
+\sdscreenshot[0.90\linewidth]{screenshots/02_universes.png}{%
+  Parallel Universes tab with Neon Synthwave Drive selected. The
+  yellow polygon is the projected blend ($\alpha = 0.7$) used to score
+  recommendations.}
+
+\paragraph{Screenshot 3 --- Insights tab.}
+PCA 2-D projection of the full 89{,}740-track library coloured by mood
+cluster, with the user's tracks highlighted as pink-ringed dots; below
+it are the user's 9-axis taste radar and mood-cluster donut.
+
+\sdscreenshot[0.90\linewidth]{screenshots/03_insights.png}{%
+  Insights tab --- PCA scatter with the Workout playlist clustered in
+  the high-energy / high-popularity region of the global music map.}
+
+\paragraph{Screenshot 4 --- Sidebar.}
+Language-stable English-only controls, sample-vs-upload selector, CSV
+schema help tooltip, and a What's-Inside cheatsheet for the four tabs.
+
+\sdsmallfigure[0.42\linewidth]{screenshots/06_sidebar.png}{%
+  Sidebar --- sample selector, CSV-upload switch, and a brief tab
+  cheatsheet.}
+
+% =====================================================================
+\section{Challenges}
+
+Up to four challenges, in order of effort spent:
+
+\begin{enumerate}
+  \item \textbf{9-D audio features $\to$ 2-D artistic fingerprint
+        (MoodPrint).}\par
+        The main difficulty was balancing uniqueness and
+        interpretability. Reducing 9 dimensions into a single image
+        while preserving both \emph{uniqueness} and \emph{readability}
+        required two design choices: (a) fixing each feature's hue so
+        the 9 tracks are mnemonically learnable, and (b) standardizing
+        the z-score with
+        $\mathrm{strength}=\mathrm{clip}((z+2)/4,0,1)$, then mapping it
+        to arc length, line width and alpha. As a result, mean
+        differences as small as $0.3\sigma$ can still produce visibly
+        different rings. The outer 8-cluster ring, sized by the
+        playlist's cluster mass, further strengthens the uniqueness of
+        the overall print.
+
+  \item \textbf{Sample imbalance in 16-class Music MBTI.}\par
+        The main difficulty was avoiding a misleading supervised
+        classifier. Naively training a 16-class classifier on the
+        library would have produced wildly unbalanced classes (ESFJ has
+        12{,}672 tracks; ISFP only 2{,}035). We sidestepped this by
+        defining the four MBTI axes as composite z-score sums rather
+        than learned weights, making classification deterministic and
+        interpretable. Representative tracks are then generated by
+        ranking each type's quadrant by total signed axis strength and
+        de-duplicating on artist.
+
+  \item \textbf{Plausible ``parallel-universe'' projection without
+        losing user identity.}\par
+        The main difficulty was changing the musical world while still
+        preserving the user's personal taste. A naive implementation
+        would replace the user's vector with the universe centroid,
+        producing identical recommendations for every user. Instead we
+        linearly interpolate
+        $\mathbf{u} + \alpha (\mathbf{a} - \mathbf{u})$ with
+        $\alpha = 0.7$, preserving 30\% of the user's personal
+        direction inside each universe pool. Cosine recommendation is
+        then applied inside the pool with the same diversity caps as
+        the main recommender.
+
+  \item \textbf{Working around the Spotify Web API 2024-11 access
+        policy change.}\par
+        The main difficulty was keeping the project reproducible
+        without depending on unstable API access. Spotify deprecated
+        audio-features endpoints for new development apps. Instead of
+        registering a Spotify dev app and depending on external token
+        freshness at request time, the entire pipeline operates on the
+        offline Kaggle dump fetched once via \texttt{kagglehub} at
+        Docker build time. This keeps cold-start time short and makes
+        the project resilient to future API changes.
+\end{enumerate}
+
+% =====================================================================
+\section{References}
+
+\begin{itemize}
+  \item Maharshi Pandya. \emph{Spotify Tracks Dataset}, 2023.\\
+        \url{https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset}
+  \item Pedregosa et al. scikit-learn: Machine Learning in Python.
+        \emph{JMLR}, 12, 2825--2830, 2011.
+  \item Hunter, J.~D. Matplotlib: A 2D graphics environment.
+        \emph{Computing in Science \& Engineering}, 9(3), 90--95, 2007.
+  \item McKinney, W. pandas: a Foundational Python Library for Data
+        Analysis and Statistics. \emph{Python for High Performance and
+        Scientific Computing}, 14, 1--9, 2011.
+  \item Streamlit Inc. \emph{Streamlit --- the fastest way to build
+        data apps}. \url{https://streamlit.io}
+  \item Plotly Technologies Inc. \emph{Plotly Python Open Source
+        Graphing Library}. \url{https://plotly.com/python/}
+  \item HuggingFace. \emph{Spaces Documentation}.
+        \url{https://huggingface.co/docs/hub/spaces}
+  \item Spotify. \emph{Introducing some changes to our Web API}, 27
+        November 2024.
+        \url{https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api}
+\end{itemize}
+
+% =====================================================================
+\section{Declaration for the use of AI Tools}
+
+AI assistants were used in the following capacities during this
+project:
+
+\begin{itemize}
+  \item Cursor was used to draft and iteratively refine the pipeline
+        modules (\path{preprocess.py}, \path{cluster.py},
+        \path{moodprint.py}, \path{mbti.py},
+        \path{parallel_universe.py}, \path{recommender.py}) and the
+        Streamlit application (\path{application/app.py}). All
+        algorithmic decisions, including the cluster naming rule book,
+        MoodPrint polar layout, MBTI 4-axis definitions, $\alpha=0.7$
+        interpolation and diversity caps, were specified by the author;
+        the assistant was used to translate those decisions into
+        runnable code.
+  \item AI assistance was used to generate the 16 short Music-MBTI
+        personality descriptions. Each description was reviewed and
+        edited by the author before inclusion.
+  \item AI was \emph{not} used to select or download the dataset, train
+        the models, invent any result numbers, or replace the author's
+        final judgement. AI assistance was used to polish the report
+        structure and wording.
+\end{itemize}
+
+% =====================================================================
+\section{Signed VeriGuide Receipt}
+
+The signed VeriGuide receipt is attached as the last page of this
+report.
+
+\begin{center}
+  \fbox{\parbox{0.82\linewidth}{\centering
+    \textcolor{red}{\textbf{[ INSERT VERIGUIDE RECEIPT IMAGE HERE ]}}\\[6pt]
+    \small After submitting to VeriGuide and saving the receipt PNG
+    as \texttt{veriguide.png} alongside this \texttt{.tex}, replace
+    this box with:\\[4pt]
+    \texttt{\textbackslash includegraphics[}\\
+    \texttt{\quad width=0.92\textbackslash linewidth,}\\
+    \texttt{\quad height=0.85\textbackslash textheight,}\\
+    \texttt{\quad keepaspectratio]\{veriguide.png\}}}}
+\end{center}
+
+% When the final VeriGuide receipt image is ready, replace the box above
+% with the following code:
+%
+% \begin{center}
+%   \includegraphics[width=0.92\linewidth,height=0.85\textheight,keepaspectratio]{veriguide.png}
+% \end{center}
+
+\end{document}
